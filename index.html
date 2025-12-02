@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="th">
 <head>
     <meta charset="UTF-8">
@@ -34,9 +34,9 @@
         <!--
             *** Netlify Forms Setup ***
             - data-netlify="true": เปิดใช้งานฟีเจอร์ Netlify Forms
-            - hidden input field: เพื่อช่วยให้ Netlify ตรวจจับฟอร์มได้
+            - action="/success.html": กำหนดให้เปลี่ยนเส้นทางไปหน้าขอบคุณหลังส่งสำเร็จ
         -->
-        <form name="job-application" method="POST" data-netlify="true" netlify-honeypot="bot-field" class="space-y-8">
+        <form name="job-application" method="POST" action="/success.html" data-netlify="true" netlify-honeypot="bot-field" class="space-y-8">
             <input type="hidden" name="form-name" value="job-application" />
             
             <!-- Honeypot Field for Spam Protection -->
