@@ -3,321 +3,852 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>แบบฟอร์มสมัครงาน | HANA Lamphun</title>
-    <!-- โหลด Tailwind CSS CDN เพื่อการออกแบบที่สวยงามและ Responsive -->
+    <title>HANA Job Application Portal (Blue/White Theme)</title>
+    <!-- โหลด Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- กำหนดฟอนต์ Inter และการตั้งค่าพื้นฐานของ Tailwind -->
     <style>
-        /* ตั้งค่าฟอนต์หลักเป็น Inter หรือ Fallback เป็น System UI */
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap');
         body {
-            font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
-            background-color: #f7f9fb;
+            font-family: 'Inter', sans-serif;
+            background-color: #eef2ff; /* Blue-50: พื้นหลังอ่อนโยน */
         }
-        /* กำหนดสไตล์สำหรับหัวข้อกลุ่ม */
-        .form-section-title {
-            @apply text-xl font-bold mb-4 border-b-2 border-indigo-500 pb-2 text-indigo-700;
+        /* Style for required field visibility: เปลี่ยนเป็นสีน้ำเงินเข้ม */
+        .required::after {
+            content: '*';
+            color: #1e40af; /* blue-800 */
+            margin-left: 0.25rem;
+        }
+        /* Style for pre-wrap to handle Gemini output formatting */
+        .whitespace-pre-wrap {
+            white-space: pre-wrap;
         }
     </style>
 </head>
-<body class="p-4 md:p-8">
+<body class="min-h-screen flex items-center justify-center p-4">
 
-    <div class="max-w-4xl mx-auto bg-white shadow-2xl rounded-xl p-6 md:p-10">
-        
-        <header class="text-center mb-10">
-            <h1 class="text-3xl md:text-4xl font-extrabold text-gray-800">
-                แบบฟอร์มใบสมัครงาน
-            </h1>
-            <p class="text-gray-500 mt-2">
-                กรุณากรอกข้อมูลให้ครบถ้วนเพื่อพิจารณาการรับสมัครงาน
-            </p>
-        </header>
+    <!-- Container หลักของแอปพลิเคชัน -->
+    <div id="app" class="w-full max-w-5xl bg-white shadow-2xl rounded-2xl overflow-hidden min-h-[600px] flex flex-col transition-all duration-500 border border-blue-200">
 
-        <!--
-            *** Netlify Forms Setup ***
-            - data-netlify="true": เปิดใช้งานฟีเจอร์ Netlify Forms
-            - action="/success.html": กำหนดให้เปลี่ยนเส้นทางไปหน้าขอบคุณหลังส่งสำเร็จ
-        -->
-        <form name="job-application" method="POST" action="/success.html" data-netlify="true" netlify-honeypot="bot-field" class="space-y-8">
-            <input type="hidden" name="form-name" value="job-application" />
+        <!-- สถานะหน้าต้อนรับ (Home Screen) -->
+        <div id="home-screen" class="flex-grow flex flex-col justify-center items-center p-0 transition-opacity duration-500 ease-in-out">
             
-            <!-- Honeypot Field for Spam Protection -->
-            <p class="hidden">
-                <label>Don’t fill this out if you’re human: <input name="bot-field" /></label>
-            </p>
+            <!-- ส่วน Header/Logo Block (สีน้ำเงินเข้ม) -->
+            <div class="w-full bg-blue-700 p-6 sm:p-8 text-white flex flex-col items-center justify-center rounded-t-xl">
+                <!-- โลโก้ Placeholder (ใช้ SVG) -->
+                <svg class="w-16 h-16 text-white mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m-4-4h8M8 8h8" />
+                </svg>
+                <h1 class="text-3xl sm:text-4xl font-extrabold text-center">
+                    HANA Microelectronics Public Co., Ltd.
+                </h1>
+                <p class="text-lg sm:text-xl font-medium text-center opacity-90 mt-1">
+                    Lamphun Job Application Portal
+                </p>
+            </div>
 
-            <!-- ============================================= -->
-            <!-- SECTION 1: ตำแหน่งที่ต้องการสมัคร -->
-            <!-- ============================================= -->
-            <section class="p-6 bg-indigo-50 rounded-lg">
-                <h2 class="form-section-title">ตำแหน่งที่ต้องการสมัคร</h2>
-                <div class="grid grid-cols-1 gap-6">
-                    <div>
-                        <label for="position" class="block text-sm font-medium text-gray-700 mb-1">
-                            ตำแหน่งที่ต้องการสมัคร <span class="text-red-500">*</span>
-                        </label>
-                        <select id="position" name="position" required
-                                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 p-2 border">
-                            <option value="">-- กรุณาเลือก --</option>
-                            <option value="Engineer">วิศวกร (Engineer)</option>
-                            <option value="Technician">ช่างเทคนิค (Technician)</option>
-                            <option value="Admin">เจ้าหน้าที่ธุรการ (Admin)</option>
-                            <option value="Operator">พนักงานฝ่ายผลิต (Operator)</option>
-                            <option value="Other">อื่นๆ (โปรดระบุ)</option>
-                        </select>
-                    </div>
-                </div>
-            </section>
-
-            <!-- ============================================= -->
-            <!-- SECTION 2: ข้อมูลส่วนตัว (Personal Data) -->
-            <!-- ============================================= -->
-            <section class="p-6 border border-gray-200 rounded-lg">
-                <h2 class="form-section-title">ข้อมูลส่วนตัว</h2>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <!-- ชื่อ-นามสกุล -->
-                    <div>
-                        <label for="full-name" class="block text-sm font-medium text-gray-700 mb-1">ชื่อ - นามสกุล (ภาษาไทย)</label>
-                        <input type="text" id="full-name" name="full-name" required
-                               class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 p-2 border" placeholder="นาย/นางสาว/นาง ...">
-                    </div>
-                    <!-- ชื่อ-นามสกุล (ภาษาอังกฤษ) - อ้างอิงจากรูปภาพ -->
-                    <div>
-                        <label for="full-name-en" class="block text-sm font-medium text-gray-700 mb-1">Full Name (English)</label>
-                        <input type="text" id="full-name-en" name="full-name-en"
-                               class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 p-2 border" placeholder="Mr./Ms./Mrs. ...">
-                    </div>
-
-                    <!-- วันเดือนปีเกิด -->
-                    <div>
-                        <label for="dob" class="block text-sm font-medium text-gray-700 mb-1">วันเดือนปีเกิด</label>
-                        <input type="date" id="dob" name="dob"
-                               class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 p-2 border">
-                    </div>
-                    <!-- เบอร์โทรศัพท์ -->
-                    <div>
-                        <label for="phone" class="block text-sm font-medium text-gray-700 mb-1">เบอร์โทรศัพท์</label>
-                        <input type="tel" id="phone" name="phone" required
-                               class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 p-2 border" placeholder="08XXXXXXXX">
-                    </div>
-                    
-                    <!-- สัญชาติ -->
-                    <div>
-                        <label for="nationality" class="block text-sm font-medium text-gray-700 mb-1">สัญชาติ</label>
-                        <input type="text" id="nationality" name="nationality" value="ไทย"
-                               class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 p-2 border">
-                    </div>
-                    <!-- ศาสนา -->
-                    <div>
-                        <label for="religion" class="block text-sm font-medium text-gray-700 mb-1">ศาสนา</label>
-                        <input type="text" id="religion" name="religion"
-                               class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 p-2 border" placeholder="พุทธ/คริสต์/อิสลาม">
-                    </div>
-                    
-                    <!-- สถานภาพสมรส -->
-                    <div class="col-span-1 md:col-span-2">
-                        <label for="marital-status" class="block text-sm font-medium text-gray-700 mb-1">สถานภาพสมรส</label>
-                        <div class="flex flex-wrap gap-4 mt-1">
-                            <label class="inline-flex items-center">
-                                <input type="radio" name="marital-status" value="โสด" class="form-radio text-indigo-600">
-                                <span class="ml-2 text-gray-700">โสด</span>
-                            </label>
-                            <label class="inline-flex items-center">
-                                <input type="radio" name="marital-status" value="สมรส" class="form-radio text-indigo-600">
-                                <span class="ml-2 text-gray-700">สมรส</span>
-                            </label>
-                            <label class="inline-flex items-center">
-                                <input type="radio" name="marital-status" value="หย่าร้าง" class="form-radio text-indigo-600">
-                                <span class="ml-2 text-gray-700">หย่าร้าง</span>
-                            </label>
-                        </div>
-                    </div>
-
-                    <!-- ที่อยู่ปัจจุบัน -->
-                    <div class="col-span-1 md:col-span-2">
-                        <label for="address" class="block text-sm font-medium text-gray-700 mb-1">ที่อยู่ปัจจุบัน</label>
-                        <textarea id="address" name="address" rows="3"
-                                  class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 p-2 border" placeholder="บ้านเลขที่, ถนน, ตำบล/แขวง, อำเภอ/เขต, จังหวัด, รหัสไปรษณีย์"></textarea>
-                    </div>
-                </div>
-            </section>
-
-            <!-- ============================================= -->
-            <!-- SECTION 3: ข้อมูลการศึกษา (Education) -->
-            <!-- ============================================= -->
-            <section class="p-6 border border-gray-200 rounded-lg">
-                <h2 class="form-section-title">ข้อมูลการศึกษา</h2>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <!-- ระดับการศึกษาสูงสุด -->
-                    <div class="md:col-span-2">
-                        <label for="highest-education" class="block text-sm font-medium text-gray-700 mb-1">
-                            ระดับการศึกษาสูงสุด <span class="text-red-500">*</span>
-                        </label>
-                        <select id="highest-education" name="highest-education" required
-                                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 p-2 border">
-                            <option value="">-- กรุณาเลือก --</option>
-                            <option value="ปริญญาเอก">ปริญญาเอก</option>
-                            <option value="ปริญญาโท">ปริญญาโท</option>
-                            <option value="ปริญญาตรี">ปริญญาตรี</option>
-                            <option value="อนุปริญญา/ปวส.">อนุปริญญา/ปวส.</option>
-                            <option value="ปวช.">ปวช.</option>
-                            <option value="มัธยมปลาย">มัธยมศึกษาตอนปลาย</option>
-                            <option value="มัธยมต้น">มัธยมศึกษาตอนต้น</option>
-                        </select>
-                    </div>
-
-                    <!-- ชื่อสถานศึกษา -->
-                    <div>
-                        <label for="institution-name" class="block text-sm font-medium text-gray-700 mb-1">ชื่อสถานศึกษา</label>
-                        <input type="text" id="institution-name" name="institution-name"
-                               class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 p-2 border" placeholder="มหาวิทยาลัย/โรงเรียน">
-                    </div>
-                    <!-- สาขาวิชา/คณะ -->
-                    <div>
-                        <label for="major" class="block text-sm font-medium text-gray-700 mb-1">สาขาวิชา/คณะ</label>
-                        <input type="text" id="major" name="major"
-                               class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 p-2 border" placeholder="เช่น วิศวกรรมไฟฟ้า, บริหารธุรกิจ">
-                    </div>
-                    
-                    <!-- เกรดเฉลี่ย -->
-                    <div>
-                        <label for="gpa" class="block text-sm font-medium text-gray-700 mb-1">เกรดเฉลี่ย (GPA)</label>
-                        <input type="text" id="gpa" name="gpa"
-                               class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 p-2 border" placeholder="4.00 หรือ N/A">
-                    </div>
-                    <!-- ปีที่สำเร็จการศึกษา -->
-                    <div>
-                        <label for="graduation-year" class="block text-sm font-medium text-gray-700 mb-1">ปีที่สำเร็จการศึกษา</label>
-                        <input type="number" id="graduation-year" name="graduation-year" min="1950" max="2050"
-                               class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 p-2 border" placeholder="ปี พ.ศ.">
-                    </div>
-                </div>
-            </section>
-
-            <!-- ============================================= -->
-            <!-- SECTION 4: ประวัติการทำงาน (Work Experience) - 3 Sets -->
-            <!-- ============================================= -->
-            <section class="p-6 bg-indigo-50 rounded-lg space-y-6">
-                <h2 class="form-section-title">ประวัติการทำงาน</h2>
-                <p class="text-sm text-gray-600">กรุณากรอกประวัติการทำงานย้อนหลัง 3 ลำดับ</p>
+            <div class="relative w-full flex-grow flex flex-col justify-center items-center p-8">
+                <!-- Banner Image Placeholder (เปลี่ยนจาก Google Drive เป็น Placeholder สีฟ้า) -->
+                <img src="https://placehold.co/1000x400/3b82f6/ffffff?text=HANA+Career+Opportunities" 
+                     alt="Career Banner" 
+                     class="w-full h-auto object-cover rounded-lg shadow-lg mb-8"
+                     onerror="this.onerror=null;this.src='https://placehold.co/1000x400/3b82f6/ffffff?text=HANA+Career+Opportunities'">
                 
-                <!-- ประวัติการทำงาน - ชุดที่ 1 (ล่าสุด) -->
-                <div class="p-4 border border-indigo-200 rounded-lg bg-white shadow">
-                    <h3 class="font-semibold text-lg text-indigo-600 mb-3">ประสบการณ์ทำงาน - ลำดับที่ 1 (ล่าสุด)</h3>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <!-- บริษัท -->
-                        <div>
-                            <label for="exp1-company" class="block text-sm font-medium text-gray-700 mb-1">บริษัท</label>
-                            <input type="text" id="exp1-company" name="exp1-company"
-                                   class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 p-2 border">
-                        </div>
-                        <!-- ตำแหน่ง -->
-                        <div>
-                            <label for="exp1-position" class="block text-sm font-medium text-gray-700 mb-1">ตำแหน่ง</label>
-                            <input type="text" id="exp1-position" name="exp1-position"
-                                   class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 p-2 border">
-                        </div>
-                        <!-- ระยะเวลาที่ทำงาน -->
-                        <div>
-                            <label for="exp1-duration" class="block text-sm font-medium text-gray-700 mb-1">ระยะเวลาที่ทำงาน (ปี/เดือน)</label>
-                            <input type="text" id="exp1-duration" name="exp1-duration"
-                                   class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 p-2 border" placeholder="เช่น 2 ปี 6 เดือน (01/2020 - 06/2022)">
-                        </div>
-                        <!-- เงินเดือนล่าสุด -->
-                        <div>
-                            <label for="exp1-salary" class="block text-sm font-medium text-gray-700 mb-1">เงินเดือนสุดท้าย (บาท)</label>
-                            <input type="number" id="exp1-salary" name="exp1-salary"
-                                   class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 p-2 border" placeholder="เฉพาะตัวเลข">
-                        </div>
-
-                        <!-- เหตุผลที่ลาออก -->
-                        <div class="md:col-span-2">
-                            <label for="exp1-reason" class="block text-sm font-medium text-gray-700 mb-1">เหตุผลที่ลาออก</label>
-                            <textarea id="exp1-reason" name="exp1-reason" rows="2"
-                                      class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 p-2 border"></textarea>
-                        </div>
-                        <!-- รายละเอียดการปฏิบัติงาน -->
-                        <div class="md:col-span-2">
-                            <label for="exp1-detail" class="block text-sm font-medium text-gray-700 mb-1">รายละเอียดการปฏิบัติงาน</label>
-                            <textarea id="exp1-detail" name="exp1-detail" rows="3"
-                                      class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 p-2 border"></textarea>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- ประวัติการทำงาน - ชุดที่ 2 -->
-                <div class="p-4 border border-indigo-200 rounded-lg bg-white shadow">
-                    <h3 class="font-semibold text-lg text-indigo-600 mb-3">ประสบการณ์ทำงาน - ลำดับที่ 2</h3>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div><label for="exp2-company" class="block text-sm font-medium text-gray-700 mb-1">บริษัท</label><input type="text" id="exp2-company" name="exp2-company" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 p-2 border"></div>
-                        <div><label for="exp2-position" class="block text-sm font-medium text-gray-700 mb-1">ตำแหน่ง</label><input type="text" id="exp2-position" name="exp2-position" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 p-2 border"></div>
-                        <div><label for="exp2-duration" class="block text-sm font-medium text-gray-700 mb-1">ระยะเวลาที่ทำงาน (ปี/เดือน)</label><input type="text" id="exp2-duration" name="exp2-duration" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 p-2 border"></div>
-                        <div><label for="exp2-salary" class="block text-sm font-medium text-gray-700 mb-1">เงินเดือนสุดท้าย (บาท)</label><input type="number" id="exp2-salary" name="exp2-salary" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 p-2 border" placeholder="เฉพาะตัวเลข"></div>
-                        <div class="md:col-span-2"><label for="exp2-reason" class="block text-sm font-medium text-gray-700 mb-1">เหตุผลที่ลาออก</label><textarea id="exp2-reason" name="exp2-reason" rows="2" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 p-2 border"></textarea></div>
-                        <div class="md:col-span-2"><label for="exp2-detail" class="block text-sm font-medium text-gray-700 mb-1">รายละเอียดการปฏิบัติงาน</label><textarea id="exp2-detail" name="exp2-detail" rows="3" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 p-2 border"></textarea></div>
-                    </div>
-                </div>
-
-                <!-- ประวัติการทำงาน - ชุดที่ 3 -->
-                <div class="p-4 border border-indigo-200 rounded-lg bg-white shadow">
-                    <h3 class="font-semibold text-lg text-indigo-600 mb-3">ประสบการณ์ทำงาน - ลำดับที่ 3</h3>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div><label for="exp3-company" class="block text-sm font-medium text-gray-700 mb-1">บริษัท</label><input type="text" id="exp3-company" name="exp3-company" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 p-2 border"></div>
-                        <div><label for="exp3-position" class="block text-sm font-medium text-gray-700 mb-1">ตำแหน่ง</label><input type="text" id="exp3-position" name="exp3-position" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 p-2 border"></div>
-                        <div><label for="exp3-duration" class="block text-sm font-medium text-gray-700 mb-1">ระยะเวลาที่ทำงาน (ปี/เดือน)</label><input type="text" id="exp3-duration" name="exp3-duration" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 p-2 border"></div>
-                        <div><label for="exp3-salary" class="block text-sm font-medium text-gray-700 mb-1">เงินเดือนสุดท้าย (บาท)</label><input type="number" id="exp3-salary" name="exp3-salary" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 p-2 border" placeholder="เฉพาะตัวเลข"></div>
-                        <div class="md:col-span-2"><label for="exp3-reason" class="block text-sm font-medium text-gray-700 mb-1">เหตุผลที่ลาออก</label><textarea id="exp3-reason" name="exp3-reason" rows="2" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 p-2 border"></textarea></div>
-                        <div class="md:col-span-2"><label for="exp3-detail" class="block text-sm font-medium text-gray-700 mb-1">รายละเอียดการปฏิบัติงาน</label><textarea id="exp3-detail" name="exp3-detail" rows="3" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 p-2 border"></textarea></div>
-                    </div>
-                </div>
-            </section>
-
-            <!-- ============================================= -->
-            <!-- SECTION 5: ข้อมูลด้านอื่น ๆ (Other Data) -->
-            <!-- ============================================= -->
-            <section class="p-6 border border-gray-200 rounded-lg">
-                <h2 class="form-section-title">ข้อมูลด้านอื่น ๆ</h2>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <!-- เงินเดือนที่ต้องการ -->
-                    <div>
-                        <label for="expected-salary" class="block text-sm font-medium text-gray-700 mb-1">
-                            เงินเดือนที่ต้องการ (บาท) <span class="text-red-500">*</span>
-                        </label>
-                        <input type="number" id="expected-salary" name="expected-salary" required
-                               class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 p-2 border" placeholder="เฉพาะตัวเลข">
-                    </div>
-                    <!-- วันเริ่มงานที่เร็วที่สุด -->
-                    <div>
-                        <label for="start-date" class="block text-sm font-medium text-gray-700 mb-1">
-                            วันเริ่มงานที่เร็วที่สุด <span class="text-red-500">*</span>
-                        </label>
-                        <input type="date" id="start-date" name="start-date" required
-                               class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 p-2 border">
-                    </div>
-                    
-                    <!-- ความสามารถพิเศษ -->
-                    <div class="md:col-span-2">
-                        <label for="skills" class="block text-sm font-medium text-gray-700 mb-1">
-                            ความสามารถพิเศษ, ทักษะด้านภาษา, หรือทักษะอื่นๆ ที่เกี่ยวข้อง
-                        </label>
-                        <textarea id="skills" name="skills" rows="4"
-                                  class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 p-2 border" placeholder="เช่น ภาษาอังกฤษ (ดีมาก), ขับรถยนต์ได้ (มีใบอนุญาต), โปรแกรม SolidWorks"></textarea>
-                    </div>
-                </div>
-            </section>
-            
-            <!-- ปุ่มส่งใบสมัคร -->
-            <div class="pt-6 border-t border-gray-200 flex justify-end">
-                <button type="submit" 
-                        class="px-8 py-3 text-lg font-medium rounded-full text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-4 focus:ring-indigo-500 focus:ring-opacity-50 transition duration-150 ease-in-out shadow-lg">
-                    ส่งใบสมัคร
+                <h2 class="text-2xl font-bold text-gray-700 mb-4">ยินดีต้อนรับ</h2>
+                <p class="text-lg text-gray-600 text-center mb-10 max-w-lg">
+                    กรุณากรอกข้อมูลในแบบฟอร์มเพื่อสมัครตำแหน่งงานที่คุณสนใจ ทีมงานจะติดต่อกลับโดยเร็วที่สุด
+                </p>
+                <button onclick="showForm()" 
+                        class="px-10 py-4 bg-blue-600 text-white font-bold text-xl rounded-full shadow-xl hover:bg-blue-700 transition duration-300 transform hover:scale-105 ring-4 ring-blue-200">
+                    สนใจสมัครงาน
                 </button>
             </div>
-            
-            <p class="text-center text-sm text-gray-500 mt-6">
-                <span class="text-red-500">*</span> หมายถึงข้อมูลที่จำเป็นต้องกรอก
-            </p>
+        </div>
 
-        </form>
+        <!-- สถานะแบบฟอร์มสมัครงาน (Form Screen) -->
+        <div id="form-screen" class="hidden flex-grow p-6 sm:p-10 transition-opacity duration-500 ease-in-out">
+            
+            <!-- Header (โลโก้และชื่อ) สำหรับหน้าฟอร์ม -->
+            <div class="flex items-center space-x-3 mb-6 border-b-4 border-blue-100 pb-4">
+                <svg class="w-8 h-8 text-blue-700" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m-4-4h8M8 8h8" />
+                </svg>
+                <h2 class="text-3xl font-bold text-blue-800">แบบฟอร์มสมัครงาน</h2>
+            </div>
+            
+            <form id="job-form" name="job_application" method="POST" data-netlify="true" netlify-honeypot="bot-field" onsubmit="return handleFormSubmit(event)" enctype="multipart/form-data">
+                
+                <input type="hidden" name="form-name" value="job_application">
+                <p class="hidden">
+                    <label>Don’t fill this out if you’re human: <input name="bot-field" /></label>
+                </p>
+
+                <div class="space-y-8">
+                    
+                    <!-- ส่วน: ข้อมูลส่วนตัว และ การศึกษา (หัวข้อสีน้ำเงิน) -->
+                    <fieldset class="border border-blue-300 p-5 rounded-xl bg-blue-50 shadow-md">
+                        <legend class="text-xl font-bold text-blue-800 px-3 py-1 bg-white rounded-lg shadow-inner border border-blue-200">1. ข้อมูลส่วนตัวและการศึกษา</legend>
+                        <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mt-4">
+                            
+                            <!-- ตำแหน่งที่ต้องการสมัคร (Dropdown) -->
+                            <div class="md:col-span-4">
+                                <label for="position" class="required block text-sm font-semibold text-gray-700">ตำแหน่งที่ต้องการสมัคร</label>
+                                <select id="position" name="ตำแหน่งที่ต้องการสมัคร" required 
+                                        class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm p-3 border focus:ring-blue-500 focus:border-blue-500 transition duration-150">
+                                    <option value="">-- เลือกตำแหน่งที่ต้องการสมัคร --</option>
+                                    <option value="Product / Process Engineer">Product / Process Engineer</option>
+                                    <option value="Industrial Engineer">Industrial Engineer</option>
+                                    <option value="Test Engineer">Test Engineer</option>
+                                    <option value="CS Engineer / CS Officer">CS Engineer / CS Officer</option>
+                                    <option value="Safety Officer / Safety Engineer">Safety Officer / Safety Engineer</option>
+                                </select>
+                            </div>
+
+                            <!-- คำนำหน้า -->
+                            <div>
+                                <label for="title" class="required block text-sm font-semibold text-gray-700">คำนำหน้า</label>
+                                <select id="title" name="คำนำหน้า" required 
+                                        class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm p-3 border focus:ring-blue-500 focus:border-blue-500 transition duration-150">
+                                    <option value="">-- เลือก --</option>
+                                    <option value="นาย">นาย</option>
+                                    <option value="นาง">นาง</option>
+                                    <option value="นางสาว">นางสาว</option>
+                                </select>
+                            </div>
+
+                            <!-- วันเดือนปีเกิด -->
+                            <div class="md:col-span-2">
+                                <label for="dob" class="required block text-sm font-semibold text-gray-700">วัน/เดือน/ปีเกิด</label>
+                                <input type="date" id="dob" name="วันเดือนปีเกิด" required 
+                                       class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm p-3 border focus:ring-blue-500 focus:border-blue-500 transition duration-150">
+                            </div>
+                            
+                            <!-- เว้นว่าง -->
+                            <div></div>
+                            
+                            <!-- ชื่อ (ภาษาไทย) -->
+                            <div class="md:col-span-2">
+                                <label for="firstName_th" class="required block text-sm font-semibold text-gray-700">ชื่อ (ภาษาไทย)</label>
+                                <input type="text" id="firstName_th" name="ชื่อ(ไทย)" required 
+                                       class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm p-3 border focus:ring-blue-500 focus:border-blue-500 transition duration-150">
+                            </div>
+
+                            <!-- นามสกุล (ภาษาไทย) -->
+                            <div class="md:col-span-2">
+                                <label for="lastName_th" class="required block text-sm font-semibold text-gray-700">นามสกุล (ภาษาไทย)</label>
+                                <input type="text" id="lastName_th" name="นามสกุล(ไทย)" required 
+                                       class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm p-3 border focus:ring-blue-500 focus:border-blue-500 transition duration-150">
+                            </div>
+
+                            <!-- ชื่อ (ภาษาอังกฤษ) - เพิ่มใหม่ -->
+                            <div class="md:col-span-2">
+                                <label for="firstName_en" class="required block text-sm font-semibold text-gray-700">ชื่อ (ภาษาอังกฤษ)</label>
+                                <input type="text" id="firstName_en" name="ชื่อ(อังกฤษ)" required 
+                                       class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm p-3 border focus:ring-blue-500 focus:border-blue-500 transition duration-150">
+                            </div>
+
+                            <!-- นามสกุล (ภาษาอังกฤษ) - เพิ่มใหม่ -->
+                            <div class="md:col-span-2">
+                                <label for="lastName_en" class="required block text-sm font-semibold text-gray-700">นามสกุล (ภาษาอังกฤษ)</label>
+                                <input type="text" id="lastName_en" name="นามสกุล(อังกฤษ)" required 
+                                       class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm p-3 border focus:ring-blue-500 focus:border-blue-500 transition duration-150">
+                            </div>
+                            
+                            <!-- เบอร์โทรศัพท์ -->
+                            <div>
+                                <label for="phone" class="required block text-sm font-semibold text-gray-700">เบอร์โทรศัพท์</label>
+                                <input type="tel" id="phone" name="เบอร์โทรศัพท์" required 
+                                       class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm p-3 border focus:ring-blue-500 focus:border-blue-500 transition duration-150">
+                            </div>
+                            
+                            <!-- อีเมล -->
+                            <div class="md:col-span-3">
+                                <label for="email" class="required block text-sm font-semibold text-gray-700">อีเมล</label>
+                                <input type="email" id="email" name="อีเมล" required 
+                                       class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm p-3 border focus:ring-blue-500 focus:border-blue-500 transition duration-150">
+                            </div>
+
+                            <!-- ที่อยู่ปัจจุบัน -->
+                            <div class="md:col-span-4">
+                                <label for="address" class="required block text-sm font-semibold text-gray-700">ที่อยู่ปัจจุบัน</label>
+                                <textarea id="address" name="ที่อยู่ปัจจุบัน" rows="3" required 
+                                          class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm p-3 border focus:ring-blue-500 focus:border-blue-500 transition duration-150"></textarea>
+                            </div>
+                            
+                            <!-- ระดับการศึกษาสูงสุด -->
+                            <div>
+                                <label for="eduLevel" class="required block text-sm font-semibold text-gray-700">ระดับการศึกษาสูงสุด</label>
+                                <select id="eduLevel" name="ระดับการศึกษาสูงสุด" required 
+                                        class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm p-3 border focus:ring-blue-500 focus:border-blue-500 transition duration-150">
+                                    <option value="">-- เลือก --</option>
+                                    <option value="ม.6/ปวช">ม.6/ปวช.</option>
+                                    <option value="ปวส">ปวส.</option>
+                                    <option value="ปริญญาตรี">ปริญญาตรี</option>
+                                    <option value="ปริญญาโท">ปริญญาโท</option>
+                                    <option value="อื่นๆ">อื่นๆ</option>
+                                </select>
+                            </div>
+
+                            <!-- ชื่อสถาบัน -->
+                            <div>
+                                <label for="institution" class="required block text-sm font-semibold text-gray-700">ชื่อสถาบัน</label>
+                                <input type="text" id="institution" name="ชื่อสถาบัน" required 
+                                       class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm p-3 border focus:ring-blue-500 focus:border-blue-500 transition duration-150">
+                            </div>
+
+                            <!-- สาขาวิชา -->
+                            <div>
+                                <label for="major" class="required block text-sm font-semibold text-gray-700">สาขาวิชา</label>
+                                <input type="text" id="major" name="สาขาวิชา" required 
+                                       class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm p-3 border focus:ring-blue-500 focus:border-blue-500 transition duration-150">
+                            </div>
+
+                            <!-- เกรดเฉลี่ย (ใหม่) -->
+                            <div>
+                                <label for="gpa" class="block text-sm font-semibold text-gray-700">เกรดเฉลี่ย</label>
+                                <input type="text" id="gpa" name="เกรดเฉลี่ย" placeholder="เช่น 3.50"
+                                       class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm p-3 border focus:ring-blue-500 focus:border-blue-500 transition duration-150">
+                            </div>
+
+                            <!-- แนบไฟล์ Resume/CV -->
+                            <div class="md:col-span-4">
+                                <label for="resumeFile" class="required block text-sm font-semibold text-gray-700">แนบไฟล์ Resume/CV (PDF, DOCX)</label>
+                                <input type="file" id="resumeFile" name="ResumeFile" required 
+                                       accept=".pdf,.doc,.docx"
+                                       class="mt-1 block w-full text-sm text-gray-700
+                                              file:mr-4 file:py-2 file:px-4
+                                              file:rounded-full file:border-0
+                                              file:text-sm file:font-semibold
+                                              file:bg-blue-200 file:text-blue-800
+                                              hover:file:bg-blue-300 transition duration-150">
+                            </div>
+                        </div>
+                    </fieldset>
+                    
+                    <!-- ** SECTION 2: ประสบการณ์ทำงาน (Radio Buttons) (หัวข้อสีน้ำเงิน) ** -->
+                    <fieldset class="border border-blue-300 p-5 rounded-xl bg-white shadow-md">
+                        <legend class="text-xl font-bold text-blue-800 px-3 py-1 bg-white rounded-lg shadow-inner border border-blue-200">2. ประสบการณ์ทำงาน</legend>
+                        <div class="flex flex-col sm:flex-row sm:space-x-8 space-y-3 sm:space-y-0 mt-4">
+                            <div class="flex items-center p-2 rounded-lg bg-blue-50 border border-blue-200 hover:bg-blue-100 transition duration-150">
+                                <input id="hasExperienceYes" name="ประสบการณ์ทำงาน" type="radio" value="มีประสบการณ์ทำงาน" required onclick="toggleExperienceFields('work')"
+                                       class="focus:ring-blue-500 h-4 w-4 text-blue-600 border-gray-300">
+                                <label for="hasExperienceYes" class="ml-3 block text-sm font-semibold text-gray-700">
+                                    มีประสบการณ์ทำงาน 
+                                </label>
+                            </div>
+                            <div class="flex items-center p-2 rounded-lg bg-blue-50 border border-blue-200 hover:bg-blue-100 transition duration-150">
+                                <input id="hasExperienceNo" name="ประสบการณ์ทำงาน" type="radio" value="ไม่มีประสบการณ์ทำงาน" required onclick="toggleExperienceFields('internship')"
+                                       class="focus:ring-blue-500 h-4 w-4 text-blue-600 border-gray-300">
+                                <label for="hasExperienceNo" class="ml-3 block text-sm font-semibold text-gray-700">
+                                    ไม่มีประสบการณ์ทำงาน 
+                                </label>
+                            </div>
+                        </div>
+                    </fieldset>
+
+                    <!-- ** SECTION 3: CONDITIONAL EXPERIENCE GROUP ** -->
+                    <div id="conditional-experience-block" class="space-y-8 hidden">
+                        
+                        <!-- 3.1 - 3.3 WORK EXPERIENCE BLOCK (Initial: hidden) -->
+                        <div id="work-experience-block" class="space-y-8 hidden">
+                            <!-- 3.1 -->
+                            <fieldset class="border border-blue-300 p-5 rounded-xl bg-blue-50 shadow-md">
+                                <legend class="text-xl font-bold text-blue-800 px-3 py-1 bg-white rounded-lg shadow-inner border border-blue-200">3.1. ประสบการณ์ทำงานที่ 1</legend>
+                                <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mt-4">
+                                    
+                                    <!-- ชื่อบริษัท -->
+                                    <div class="md:col-span-2">
+                                        <label for="job1_company" class="block text-sm font-semibold text-gray-700">ชื่อบริษัท</label>
+                                        <input type="text" id="job1_company" name="บ.1_ชื่อบริษัท" class="job-input mt-1 block w-full rounded-lg border-gray-300 shadow-sm p-3 border focus:ring-blue-500 focus:border-blue-500 transition duration-150">
+                                    </div>
+
+                                    <!-- ตำแหน่ง -->
+                                    <div class="md:col-span-2">
+                                        <label for="job1_position" class="block text-sm font-semibold text-gray-700">ตำแหน่ง</label>
+                                        <input type="text" id="job1_position" name="บ.1_ตำแหน่ง" class="job-input mt-1 block w-full rounded-lg border-gray-300 shadow-sm p-3 border focus:ring-blue-500 focus:border-blue-500 transition duration-150">
+                                    </div>
+                                    
+                                    <!-- ช่วงเวลาทำงาน (ใหม่) -->
+                                    <div class="md:col-span-2">
+                                        <label for="job1_duration_start" class="block text-sm font-semibold text-gray-700">ปีที่เริ่มทำงาน</label>
+                                        <input type="number" id="job1_duration_start" name="บ.1_ปีที่เริ่มทำงาน" placeholder="เช่น 2018"
+                                            class="job-input mt-1 block w-full rounded-lg border-gray-300 shadow-sm p-3 border focus:ring-blue-500 focus:border-blue-500 transition duration-150">
+                                    </div>
+                                    <div class="md:col-span-2">
+                                        <label for="job1_duration_end" class="block text-sm font-semibold text-gray-700">ปีที่สิ้นสุดทำงาน</label>
+                                        <input type="number" id="job1_duration_end" name="บ.1_ปีที่สิ้นสุดทำงาน" placeholder="เช่น 2023 หรือ ปัจจุบัน"
+                                            class="job-input mt-1 block w-full rounded-lg border-gray-300 shadow-sm p-3 border focus:ring-blue-500 focus:border-blue-500 transition duration-150">
+                                    </div>
+
+                                    <!-- ฐานเงินเดือนล่าสุด -->
+                                    <div class="md:col-span-2">
+                                        <label for="job1_salary" class="block text-sm font-semibold text-gray-700">ฐานเงินเดือนล่าสุด (บาท/เดือน)</label>
+                                        <input type="number" id="job1_salary" name="บ.1_ฐานเงินเดือน" placeholder="เช่น 25000"
+                                               class="job-input mt-1 block w-full rounded-lg border-gray-300 shadow-sm p-3 border focus:ring-blue-500 focus:border-blue-500 transition duration-150">
+                                    </div>
+
+                                    <!-- สาเหตุที่ออกจากงาน -->
+                                    <div class="md:col-span-2">
+                                        <label for="job1_reason" class="block text-sm font-semibold text-gray-700">สาเหตุที่ออกจากงาน</label>
+                                        <input type="text" id="job1_reason" name="บ.1_สาเหตุที่ออก" class="job-input mt-1 block w-full rounded-lg border-gray-300 shadow-sm p-3 border focus:ring-blue-500 focus:border-blue-500 transition duration-150">
+                                    </div>
+                                    
+                                    <!-- รายละเอียดประสบการณ์ทำงาน -->
+                                    <div class="md:col-span-4">
+                                        <label for="job1_details" class="block text-sm font-semibold text-gray-700">รายละเอียดประสบการณ์ทำงาน</label>
+                                        <textarea id="job1_details" name="บ.1_รายละเอียดงาน" rows="3" class="job-input mt-1 block w-full rounded-lg border-gray-300 shadow-sm p-3 border focus:ring-blue-500 focus:border-blue-500 transition duration-150"></textarea>
+                                    </div>
+                                </div>
+                            </fieldset>
+
+                            <!-- 3.2 -->
+                            <fieldset class="border border-blue-300 p-5 rounded-xl bg-white shadow-md">
+                                <legend class="text-xl font-bold text-blue-800 px-3 py-1 bg-blue-50 rounded-lg shadow-inner border border-blue-200">3.2. ประสบการณ์ทำงานที่ 2</legend>
+                                <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mt-4">
+                                    
+                                    <!-- ชื่อบริษัท -->
+                                    <div class="md:col-span-2">
+                                        <label for="job2_company" class="block text-sm font-semibold text-gray-700">ชื่อบริษัท</label>
+                                        <input type="text" id="job2_company" name="บ.2_ชื่อบริษัท" class="job-input mt-1 block w-full rounded-lg border-gray-300 shadow-sm p-3 border focus:ring-blue-500 focus:border-blue-500 transition duration-150">
+                                    </div>
+                                    
+                                    <!-- ตำแหน่ง -->
+                                    <div class="md:col-span-2">
+                                        <label for="job2_position" class="block text-sm font-semibold text-gray-700">ตำแหน่ง</label>
+                                        <input type="text" id="job2_position" name="บ.2_ตำแหน่ง" class="job-input mt-1 block w-full rounded-lg border-gray-300 shadow-sm p-3 border focus:ring-blue-500 focus:border-blue-500 transition duration-150">
+                                    </div>
+                                    
+                                    <!-- ช่วงเวลาทำงาน (ใหม่) -->
+                                    <div class="md:col-span-2">
+                                        <label for="job2_duration_start" class="block text-sm font-semibold text-gray-700">ปีที่เริ่มทำงาน</label>
+                                        <input type="number" id="job2_duration_start" name="บ.2_ปีที่เริ่มทำงาน" placeholder="เช่น 2016"
+                                            class="job-input mt-1 block w-full rounded-lg border-gray-300 shadow-sm p-3 border focus:ring-blue-500 focus:border-blue-500 transition duration-150">
+                                    </div>
+                                    <div class="md:col-span-2">
+                                        <label for="job2_duration_end" class="block text-sm font-semibold text-gray-700">ปีที่สิ้นสุดทำงาน</label>
+                                        <input type="number" id="job2_duration_end" name="บ.2_ปีที่สิ้นสุดทำงาน" placeholder="เช่น 2018"
+                                            class="job-input mt-1 block w-full rounded-lg border-gray-300 shadow-sm p-3 border focus:ring-blue-500 focus:border-blue-500 transition duration-150">
+                                    </div>
+                                    
+                                    <!-- ฐานเงินเดือนล่าสุด -->
+                                    <div class="md:col-span-2">
+                                        <label for="job2_salary" class="block text-sm font-semibold text-gray-700">ฐานเงินเดือนล่าสุด (บาท/เดือน)</label>
+                                        <input type="number" id="job2_salary" name="บ.2_ฐานเงินเดือน" placeholder="เช่น 25000"
+                                               class="job-input mt-1 block w-full rounded-lg border-gray-300 shadow-sm p-3 border focus:ring-blue-500 focus:border-blue-500 transition duration-150">
+                                    </div>
+                                    
+                                    <!-- สาเหตุที่ออกจากงาน -->
+                                    <div class="md:col-span-2">
+                                        <label for="job2_reason" class="block text-sm font-semibold text-gray-700">สาเหตุที่ออกจากงาน</label>
+                                        <input type="text" id="job2_reason" name="บ.2_สาเหตุที่ออก" class="job-input mt-1 block w-full rounded-lg border-gray-300 shadow-sm p-3 border focus:ring-blue-500 focus:border-blue-500 transition duration-150">
+                                    </div>
+                                    
+                                    <!-- รายละเอียดประสบการณ์ทำงาน -->
+                                    <div class="md:col-span-4">
+                                        <label for="job2_details" class="block text-sm font-semibold text-gray-700">รายละเอียดประสบการณ์ทำงาน</label>
+                                        <textarea id="job2_details" name="บ.2_รายละเอียดงาน" rows="3" class="job-input mt-1 block w-full rounded-lg border-gray-300 shadow-sm p-3 border focus:ring-blue-500 focus:border-blue-500 transition duration-150"></textarea>
+                                    </div>
+                                </div>
+                            </fieldset>
+
+                            <!-- 3.3 -->
+                            <fieldset class="border border-blue-300 p-5 rounded-xl bg-blue-50 shadow-md">
+                                <legend class="text-xl font-bold text-blue-800 px-3 py-1 bg-white rounded-lg shadow-inner border border-blue-200">3.3. ประสบการณ์ทำงานที่ 3</legend>
+                                <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mt-4">
+                                    
+                                    <!-- ชื่อบริษัท -->
+                                    <div class="md:col-span-2">
+                                        <label for="job3_company" class="block text-sm font-semibold text-gray-700">ชื่อบริษัท</label>
+                                        <input type="text" id="job3_company" name="บ.3_ชื่อบริษัท" class="job-input mt-1 block w-full rounded-lg border-gray-300 shadow-sm p-3 border focus:ring-blue-500 focus:border-blue-500 transition duration-150">
+                                    </div>
+                                    
+                                    <!-- ตำแหน่ง -->
+                                    <div class="md:col-span-2">
+                                        <label for="job3_position" class="block text-sm font-semibold text-gray-700">ตำแหน่ง</label>
+                                        <input type="text" id="job3_position" name="บ.3_ตำแหน่ง" class="job-input mt-1 block w-full rounded-lg border-gray-300 shadow-sm p-3 border focus:ring-blue-500 focus:border-blue-500 transition duration-150">
+                                    </div>
+                                    
+                                    <!-- ช่วงเวลาทำงาน (ใหม่) -->
+                                    <div class="md:col-span-2">
+                                        <label for="job3_duration_start" class="block text-sm font-semibold text-gray-700">ปีที่เริ่มทำงาน</label>
+                                        <input type="number" id="job3_duration_start" name="บ.3_ปีที่เริ่มทำงาน" placeholder="เช่น 2014"
+                                            class="job-input mt-1 block w-full rounded-lg border-gray-300 shadow-sm p-3 border focus:ring-blue-500 focus:border-blue-500 transition duration-150">
+                                    </div>
+                                    <div class="md:col-span-2">
+                                        <label for="job3_duration_end" class="block text-sm font-semibold text-gray-700">ปีที่สิ้นสุดทำงาน</label>
+                                        <input type="number" id="job3_duration_end" name="บ.3_ปีที่สิ้นสุดทำงาน" placeholder="เช่น 2016"
+                                            class="job-input mt-1 block w-full rounded-lg border-gray-300 shadow-sm p-3 border focus:ring-blue-500 focus:border-blue-500 transition duration-150">
+                                    </div>
+
+                                    <!-- ฐานเงินเดือนล่าสุด -->
+                                    <div class="md:col-span-2">
+                                        <label for="job3_salary" class="block text-sm font-semibold text-gray-700">ฐานเงินเดือนล่าสุด (บาท/เดือน)</label>
+                                        <input type="number" id="job3_salary" name="บ.3_ฐานเงินเดือน" placeholder="เช่น 25000"
+                                               class="job-input mt-1 block w-full rounded-lg border-gray-300 shadow-sm p-3 border focus:ring-blue-500 focus:border-blue-500 transition duration-150">
+                                    </div>
+                                    
+                                    <!-- สาเหตุที่ออกจากงาน -->
+                                    <div class="md:col-span-2">
+                                        <label for="job3_reason" class="block text-sm font-semibold text-gray-700">สาเหตุที่ออกจากงาน</label>
+                                        <input type="text" id="job3_reason" name="บ.3_สาเหตุที่ออก" class="job-input mt-1 block w-full rounded-lg border-gray-300 shadow-sm p-3 border focus:ring-blue-500 focus:border-blue-500 transition duration-150">
+                                    </div>
+                                    
+                                    <!-- รายละเอียดประสบการณ์ทำงาน -->
+                                    <div class="md:col-span-4">
+                                        <label for="job3_details" class="block text-sm font-semibold text-gray-700">รายละเอียดประสบการณ์ทำงาน</label>
+                                        <textarea id="job3_details" name="บ.3_รายละเอียดงาน" rows="3" class="job-input mt-1 block w-full rounded-lg border-gray-300 shadow-sm p-3 border focus:ring-blue-500 focus:border-blue-500 transition duration-150"></textarea>
+                                    </div>
+                                </div>
+                            </fieldset>
+                        </div>
+
+                        <!-- 3.4 INTERNSHIP EXPERIENCE BLOCK (Initial: hidden) -->
+                        <fieldset id="internship-block" class="border border-blue-300 p-5 rounded-xl bg-white shadow-md hidden">
+                            <legend class="text-xl font-bold text-blue-800 px-3 py-1 bg-blue-50 rounded-lg shadow-inner border border-blue-200">3.4. ประสบการณ์การฝึกงาน</legend>
+                            <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mt-4">
+                                
+                                <!-- ชื่อบริษัท/หน่วยงานที่ฝึกงาน -->
+                                <div class="md:col-span-2">
+                                    <label for="intern_company" class="block text-sm font-semibold text-gray-700">ชื่อบริษัท/หน่วยงานที่ฝึกงาน</label>
+                                    <input type="text" id="intern_company" name="ฝึกงาน_ชื่อบริษัท" class="internship-input mt-1 block w-full rounded-lg border-gray-300 shadow-sm p-3 border focus:ring-blue-500 focus:border-blue-500 transition duration-150">
+                                </div>
+                                
+                                <!-- ตำแหน่ง/ลักษณะงานที่ฝึก -->
+                                <div class="md:col-span-2">
+                                    <label for="intern_position" class="block text-sm font-semibold text-gray-700">ตำแหน่ง/ลักษณะงานที่ฝึก</label>
+                                    <input type="text" id="intern_position" name="ฝึกงาน_ตำแหน่ง" class="internship-input mt-1 block w-full rounded-lg border-gray-300 shadow-sm p-3 border focus:ring-blue-500 focus:border-blue-500 transition duration-150">
+                                </div>
+
+                                <!-- ช่วงเวลาฝึกงาน (ใหม่) -->
+                                <div class="md:col-span-2">
+                                    <label for="intern_duration" class="block text-sm font-semibold text-gray-700">ช่วงเวลาฝึกงาน</label>
+                                    <input type="text" id="intern_duration" name="ฝึกงาน_ช่วงเวลา" placeholder="เช่น 1 มิ.ย. 2023 - 30 ก.ย. 2023"
+                                           class="internship-input mt-1 block w-full rounded-lg border-gray-300 shadow-sm p-3 border focus:ring-blue-500 focus:border-blue-500 transition duration-150">
+                                </div>
+                                
+                                <!-- ชื่อผู้ดูแล/พี่เลี้ยง -->
+                                <div class="md:col-span-2">
+                                    <label for="intern_supervisor" class="block text-sm font-semibold text-gray-700">ชื่อผู้ดูแล/พี่เลี้ยง</label>
+                                    <input type="text" id="intern_supervisor" name="ฝึกงาน_ผู้ดูแล" class="internship-input mt-1 block w-full rounded-lg border-gray-300 shadow-sm p-3 border focus:ring-blue-500 focus:border-blue-500 transition duration-150">
+                                </div>
+                                
+                                <!-- รายละเอียดการฝึกงานที่สำคัญ -->
+                                <div class="md:col-span-4">
+                                    <label for="intern_details" class="block text-sm font-semibold text-gray-700">รายละเอียดการฝึกงานที่สำคัญ</label>
+                                    <textarea id="intern_details" name="ฝึกงาน_รายละเอียดงาน" rows="3" class="internship-input mt-1 block w-full rounded-lg border-gray-300 shadow-sm p-3 border focus:ring-blue-500 focus:border-blue-500 transition duration-150"></textarea>
+                                </div>
+                            </div>
+                        </fieldset>
+                    </div>
+
+                    <!-- ** SECTION 4: ข้อมูลด้านการจ้างงาน (Employment Information) (หัวข้อสีน้ำเงิน) ** -->
+                    <fieldset class="border border-blue-300 p-5 rounded-xl bg-blue-50 shadow-md">
+                        <legend class="text-xl font-bold text-blue-800 px-3 py-1 bg-white rounded-lg shadow-inner border border-blue-200">4. ข้อมูลด้านการจ้างงาน</legend>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
+                            
+                            <!-- เงินเดือนที่คาดหวัง -->
+                            <div>
+                                <label for="expectedSalary" class="required block text-sm font-semibold text-gray-700">เงินเดือนที่คาดหวัง (บาท/เดือน)</label>
+                                <input type="number" id="expectedSalary" name="เงินเดือนที่คาดหวัง" required 
+                                       placeholder="เช่น 18000"
+                                       class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm p-3 border focus:ring-blue-500 focus:border-blue-500 transition duration-150">
+                            </div>
+
+                            <!-- วันที่สามารถเริ่มงานได้ -->
+                            <div>
+                                <label for="availableDate" class="required block text-sm font-semibold text-gray-700">วันที่สามารถเริ่มงานได้</label>
+                                <input type="date" id="availableDate" name="วันที่สามารถเริ่มงานได้" required 
+                                       class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm p-3 border focus:ring-blue-500 focus:border-blue-500 transition duration-150">
+                            </div>
+                        </div>
+                    </fieldset>
+
+
+                    <!-- ** SECTION 5: บุคคลอ้างอิง (หัวข้อสีน้ำเงิน) ** -->
+                    <fieldset class="border border-blue-300 p-5 rounded-xl bg-white shadow-md">
+                        <legend class="text-xl font-bold text-blue-800 px-3 py-1 bg-blue-50 rounded-lg shadow-inner border border-blue-200">5. บุคคลอ้างอิง</legend>
+                        <p class="text-sm text-gray-500 mb-5 mt-2">โปรดระบุบุคคลอ้างอิงที่ไม่ใช่ญาติ 1 ท่าน</p>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            
+                            <!-- ชื่อ-นามสกุล -->
+                            <div>
+                                <label for="ref_name" class="required block text-sm font-semibold text-gray-700">ชื่อ-นามสกุล</label>
+                                <input type="text" id="ref_name" name="อ้างอิง_ชื่อ" required 
+                                       class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm p-3 border focus:ring-blue-500 focus:border-blue-500 transition duration-150">
+                            </div>
+
+                            <!-- ตำแหน่ง -->
+                            <div>
+                                <label for="ref_position" class="required block text-sm font-semibold text-gray-700">ตำแหน่ง</label>
+                                <input type="text" id="ref_position" name="อ้างอิง_ตำแหน่ง" required 
+                                       class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm p-3 border focus:ring-blue-500 focus:border-blue-500 transition duration-150">
+                            </div>
+                            
+                            <!-- เบอร์โทร -->
+                            <div>
+                                <label for="ref_phone" class="required block text-sm font-semibold text-gray-700">เบอร์โทรศัพท์</label>
+                                <input type="tel" id="ref_phone" name="อ้างอิง_เบอร์โทร" required 
+                                       class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm p-3 border focus:ring-blue-500 focus:border-blue-500 transition duration-150">
+                            </div>
+
+                            <!-- ความสัมพันธ์ -->
+                            <div>
+                                <label for="ref_relation" class="block text-sm font-semibold text-gray-700">ความสัมพันธ์ (เช่น หัวหน้างาน, อาจารย์)</label>
+                                <input type="text" id="ref_relation" name="อ้างอิง_ความสัมพันธ์" 
+                                       class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm p-3 border focus:ring-blue-500 focus:border-blue-500 transition duration-150">
+                            </div>
+                        </div>
+                    </fieldset>
+
+                </div>
+                
+                <!-- ส่วน Gemini AI Analysis (ปรับเป็นสีน้ำเงิน) -->
+                <div class="mt-8 pt-6 border-t border-blue-200">
+                    <h3 class="text-xl font-bold text-blue-800 mb-4">เครื่องมือช่วยเตรียมใบสมัคร (Gemini AI)</h3>
+                    
+                    <!-- ปุ่มเรียกใช้ AI (ปรับเป็นสีน้ำเงิน) -->
+                    <button type="button" onclick="runAnalysis()"
+                            class="px-6 py-3 w-full bg-blue-600 text-white font-bold rounded-xl shadow-lg hover:bg-blue-700 transition duration-300 transform hover:scale-[1.01] flex items-center justify-center space-x-2"
+                            id="analysis-button">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6 1.122l-.867.499m4 8.24a9 9 0 11-18 0 9 9 0 0118 0zm-4.478 9.617L15.222 17H8.778l-1.94 2.162M12 7.295V10m0 0l-3 3m3-3l3 3"></path></svg>
+                        <span>วิเคราะห์ความเหมาะสมของตำแหน่ง</span> 
+                    </button>
+
+                    <!-- กล่องแสดงผลลัพธ์การวิเคราะห์ (ปรับเป็นสีน้ำเงิน) -->
+                    <div id="analysis-card" class="hidden mt-4 p-5 border-l-4 border-blue-600 bg-blue-100 rounded-r-xl shadow-inner">
+                        <p class="text-sm font-bold text-blue-800 mb-2 flex items-center space-x-2">
+                            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path></svg>
+                            <span>ผลการวิเคราะห์เบื้องต้นจาก AI</span>
+                        </p>
+                        <div id="analysis-output-content" class="text-gray-800 text-base">
+                            <!-- ผลลัพธ์จากการวิเคราะห์จะแสดงที่นี่ -->
+                        </div>
+                        <p class="text-xs text-blue-700 mt-4 italic">**ข้อสงวนสิทธิ์: การวิเคราะห์นี้จัดทำขึ้นโดย AI เพื่อเป็นข้อมูลประกอบเท่านั้น โปรดตรวจสอบข้อมูลด้วยตนเองก่อนส่ง</p>
+                    </div>
+                </div>
+
+                <!-- ปุ่มส่งข้อมูล -->
+                <div class="mt-10 flex justify-center">
+                    <button type="submit" 
+                            class="px-10 py-4 w-full md:w-auto bg-blue-700 text-white font-extrabold text-xl rounded-full shadow-2xl hover:bg-blue-800 transition duration-300 transform hover:scale-105 ring-4 ring-blue-300"
+                            id="submit-button">
+                        <span id="submit-text">ส่งข้อมูลใบสมัคร</span>
+                        <span id="loading-spinner" class="hidden">กำลังส่ง...</span>
+                    </button>
+                </div>
+                
+                <!-- ปุ่มย้อนกลับไปหน้าแรก -->
+                <div class="mt-4 flex justify-center">
+                    <button type="button" onclick="showHome()" class="text-sm text-blue-600 hover:text-blue-800 transition duration-300 font-medium">
+                        ย้อนกลับหน้าหลัก
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <!-- สถานะหน้าขอบคุณ (Thank You Screen) -->
+        <div id="thankyou-screen" class="hidden flex-grow flex flex-col justify-center items-center p-6 sm:p-10 text-center bg-blue-50 rounded-b-xl">
+            <svg class="w-24 h-24 text-blue-600 mb-6 animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+            <h2 class="text-4xl font-bold text-blue-800 mb-4">ส่งข้อมูลสำเร็จ!</h2>
+            <!-- *** ข้อความขอบคุณตามที่ลูกค้ากำหนด *** -->
+            <p class="text-xl text-gray-700 max-w-lg">
+                ขอบคุณที่สนใจร่วมงานกับ HANA Microelectronics ค่ะ/ครับ
+            </p>
+            <p class="text-lg text-gray-600 mt-2">
+                หากท่านผ่านการพิจารณา คุณจะได้รับการติดต่อกลับจากเจ้าหน้าที่สรรหาผ่านทางโทรศัพท์
+            </p>
+            <p class="text-lg text-gray-500 mt-1">
+                ขอขอบคุณที่ให้ความสนใจในตำแหน่งงานกับบริษัทของเราค่ะ/ครับ
+            </p>
+            <!-- ************************* -->
+            <div class="mt-10">
+                <button onclick="showHome()" 
+                        class="px-8 py-3 bg-blue-600 text-white font-semibold rounded-full shadow-xl hover:bg-blue-700 transition duration-300 transform hover:scale-105">
+                    กลับสู่หน้าแรก
+                </button>
+            </div>
+        </div>
+
     </div>
 
+    <script>
+        // ฟังก์ชันจัดการการเปลี่ยนหน้าจอ
+        const homeScreen = document.getElementById('home-screen');
+        const formScreen = document.getElementById('form-screen');
+        const thankyouScreen = document.getElementById('thankyou-screen');
+        const submitButton = document.getElementById('submit-button');
+        const submitText = document.getElementById('submit-text');
+        
+        // --- ส่วนการจัดการ Gemini API ---
+        const apiKey = ""; 
+        const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
+        const MAX_RETRIES = 3;
+
+        /**
+         * ฟังก์ชันเรียกใช้ Gemini API เพื่อวิเคราะห์ความเหมาะสมของงาน
+         */
+        async function callGeminiAnalysis(userQuery, systemPrompt) {
+            const payload = {
+                contents: [{ parts: [{ text: userQuery }] }],
+                // เปิด Google Search เพื่อเพิ่มความเข้าใจในตำแหน่งงานเฉพาะทางหากจำเป็น
+                tools: [{ "google_search": {} }], 
+                systemInstruction: {
+                    parts: [{ text: systemPrompt }]
+                },
+            };
+
+            let attempt = 0;
+            while (attempt < MAX_RETRIES) {
+                try {
+                    const response = await fetch(apiUrl, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+
+                    if (response.ok) {
+                        const result = await response.json();
+                        // แยกส่วนข้อความที่ Gemini สร้าง
+                        const text = result.candidates?.[0]?.content?.parts?.[0]?.text || "ไม่พบผลการวิเคราะห์ที่ชัดเจน";
+                        return text;
+                    } else {
+                        console.error(`API Error: Status ${response.status}`);
+                    }
+                } catch (error) {
+                    console.error('Network or Parsing Error:', error);
+                }
+
+                attempt++;
+                if (attempt < MAX_RETRIES) {
+                    const delay = Math.pow(2, attempt) * 1000; // Exponential backoff (1s, 2s, 4s)
+                    await new Promise(resolve => setTimeout(resolve, delay));
+                }
+            }
+            return "ไม่สามารถติดต่อระบบวิเคราะห์ได้ โปรดลองอีกครั้ง";
+        }
+
+        /**
+         * ฟังก์ชันหลักในการรวบรวมข้อมูลและเรียกใช้การวิเคราะห์
+         */
+        async function runAnalysis() {
+            const analysisOutput = document.getElementById('analysis-output-content');
+            const analysisCard = document.getElementById('analysis-card');
+            const analysisButton = document.getElementById('analysis-button');
+            
+            const hasWork = document.getElementById('hasExperienceYes').checked;
+            const hasInternship = document.getElementById('hasExperienceNo').checked;
+
+            // 1. ตรวจสอบข้อมูลเบื้องต้นที่ต้องมีสำหรับการวิเคราะห์
+            const position = document.getElementById('position').value.trim();
+            const eduLevel = document.getElementById('eduLevel').value;
+            const major = document.getElementById('major').value.trim();
+            const expectedSalary = document.getElementById('expectedSalary').value.trim(); 
+
+            if (!position || !eduLevel || !major || !expectedSalary) {
+                analysisOutput.innerHTML = '<p class="text-blue-700 font-semibold">⚠️ กรุณากรอกข้อมูลสำคัญ (ตำแหน่ง, การศึกษา, สาขาวิชา, เงินเดือนที่คาดหวัง) ให้ครบถ้วนก่อนทำการวิเคราะห์</p>';
+                analysisCard.classList.remove('hidden');
+                return;
+            }
+
+            // 2. รวบรวมข้อมูลสำหรับ Prompt (เลือกจาก Work หรือ Internship)
+            let jobDetails = 'ไม่มีประสบการณ์ทำงานหรือฝึกงานระบุ';
+            
+            if (hasWork) {
+                // ถ้าเลือกมีประสบการณ์ทำงาน (ใช้ชุดที่ 1 ล่าสุด)
+                const job1_company = document.getElementById('job1_company').value.trim();
+                const job1_position = document.getElementById('job1_position').value.trim();
+                const job1_details = document.getElementById('job1_details').value.trim();
+                const job1_salary = document.getElementById('job1_salary').value.trim(); 
+                const job1_duration_start = document.getElementById('job1_duration_start').value.trim();
+                const job1_duration_end = document.getElementById('job1_duration_end').value.trim();
+
+                if (job1_company && job1_position) {
+                     jobDetails = `ประสบการณ์ทำงานล่าสุด (ประจำ): ${job1_position} ที่ ${job1_company} (ปี ${job1_duration_start} - ${job1_duration_end}). ฐานเงินเดือนล่าสุด: ${job1_salary} บาท/เดือน. หน้าที่ความรับผิดชอบโดยย่อ: ${job1_details || 'ไม่ได้ระบุ'}`;
+                } else {
+                    jobDetails = 'ผู้สมัครระบุว่ามีประสบการณ์ทำงาน แต่ไม่ได้กรอกรายละเอียดงานล่าสุด (ชุดที่ 1)';
+                }
+            } else if (hasInternship) {
+                // ถ้าเลือกไม่มีประสบการณ์ทำงาน (แต่มีฝึกงาน)
+                const intern_company = document.getElementById('intern_company').value.trim();
+                const intern_position = document.getElementById('intern_position').value.trim();
+                const intern_details = document.getElementById('intern_details').value.trim();
+                const intern_duration = document.getElementById('intern_duration').value.trim();
+                
+                if (intern_company && intern_position) {
+                     jobDetails = `ประสบการณ์การฝึกงาน: ${intern_position} ที่ ${intern_company}. ช่วงเวลา: ${intern_duration || 'ไม่ได้ระบุ'}. หน้าที่ความรับผิดชอบโดยย่อ: ${intern_details || 'ไม่ได้ระบุ'}`;
+                } else {
+                    jobDetails = 'ผู้สมัครระบุว่าไม่มีประสบการณ์ทำงาน และไม่ได้กรอกรายละเอียดการฝึกงาน';
+                }
+            }
+            
+            const userQuery = `ผู้สมัครต้องการตำแหน่งงาน: ${position}. 
+                              ระดับการศึกษาสูงสุด: ${eduLevel}. 
+                              สาขาวิชา: ${major}. 
+                              เงินเดือนที่คาดหวัง: ${expectedSalary} บาท/เดือน.
+                              ${jobDetails}. 
+                              วิเคราะห์ความเหมาะสม สรุปจุดแข็ง 2-3 ข้อสำหรับตำแหน่งงานนี้ และให้ข้อเสนอแนะสั้นๆ เกี่ยวกับเงินเดือนที่คาดหวัง`;
+            
+            const systemPrompt = "คุณคือผู้ช่วย HR ที่เป็นมิตรและมีความเป็นมืออาชีพจาก HANA Microelectronics ให้วิเคราะห์ข้อมูลผู้สมัคร สรุปจุดแข็งหลัก 2-3 ข้อว่าทำไมผู้สมัครจึงเหมาะสมกับตำแหน่งที่ต้องการสมัคร และให้ข้อเสนอแนะเกี่ยวกับความเหมาะสมของเงินเดือนที่คาดหวัง โดยตอบเป็นภาษาไทยในย่อหน้าเดียวเท่านั้น";
+
+            // 3. แสดงสถานะกำลังโหลด
+            analysisOutput.innerHTML = '<p class="text-center py-4 text-blue-800 font-bold flex items-center justify-center space-x-2"><svg class="animate-spin h-5 w-5 text-blue-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg><span>กำลังวิเคราะห์ข้อมูลและจุดแข็งของคุณ...</span></p>';
+            analysisCard.classList.remove('hidden');
+            analysisButton.disabled = true;
+            analysisButton.classList.add('opacity-70', 'cursor-not-allowed', 'bg-blue-500');
+
+            // 4. เรียกใช้ Gemini API
+            const analysisText = await callGeminiAnalysis(userQuery, systemPrompt);
+
+            // 5. แสดงผลลัพธ์
+            analysisOutput.innerHTML = `<p class="whitespace-pre-wrap">${analysisText}</p>`;
+            analysisButton.disabled = false;
+            analysisButton.classList.remove('opacity-70', 'cursor-not-allowed', 'bg-blue-500');
+        }
+
+        // --- ฟังก์ชันจัดการ UI เพิ่มเติม ---
+
+        /**
+         * ฟังก์ชันแสดง/ซ่อนส่วนประสบการณ์ทำงาน/ฝึกงานตามการเลือกของ Radio Button
+         * @param {string} type - 'work' หรือ 'internship'
+         */
+        function toggleExperienceFields(type) {
+            const conditionalBlock = document.getElementById('conditional-experience-block');
+            const workBlock = document.getElementById('work-experience-block');
+            const internshipBlock = document.getElementById('internship-block');
+            
+            const workInputs = workBlock.querySelectorAll('.job-input');
+            const internshipInputs = internshipBlock.querySelectorAll('.internship-input');
+            
+            // แสดง Conditional Block เสมอเมื่อมีการเลือก
+            conditionalBlock.classList.remove('hidden');
+
+            if (type === 'work') {
+                workBlock.classList.remove('hidden');
+                internshipBlock.classList.add('hidden');
+                
+                // Clear and disable internship fields
+                internshipInputs.forEach(input => input.value = '');
+            } else if (type === 'internship') {
+                workBlock.classList.add('hidden');
+                internshipBlock.classList.remove('hidden');
+
+                // Clear and disable work fields
+                workInputs.forEach(input => input.value = '');
+            } else {
+                // หากไม่มีการเลือกใดๆ (ไม่ควรเกิดขึ้น)
+                workBlock.classList.add('hidden');
+                internshipBlock.classList.add('hidden');
+                conditionalBlock.classList.add('hidden');
+                workInputs.forEach(input => input.value = '');
+                internshipInputs.forEach(input => input.value = '');
+            }
+        }
+
+        // ฟังก์ชันจัดการ modal (แทน alert)
+        function showModal(message) {
+            // ในสภาพแวดล้อมจริง จะใช้ Modal UI
+            const modalHtml = `
+                <div id="custom-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+                    <div class="bg-white p-6 rounded-lg shadow-xl max-w-sm w-full border-t-4 border-blue-600">
+                        <h3 class="text-xl font-bold text-blue-800 mb-3">แจ้งเตือน</h3>
+                        <p class="text-gray-700 mb-5">${message}</p>
+                        <button onclick="document.getElementById('custom-modal').remove()" 
+                                class="w-full bg-blue-600 text-white py-2 rounded-lg font-semibold hover:bg-blue-700 transition">
+                            ตกลง
+                        </button>
+                    </div>
+                </div>
+            `;
+            document.body.insertAdjacentHTML('beforeend', modalHtml);
+        }
+
+        function setScreen(screen) {
+            // ซ่อนทุกหน้าจอ
+            [homeScreen, formScreen, thankyouScreen].forEach(el => el.classList.add('hidden'));
+
+            // แสดงหน้าจอที่ต้องการ
+            setTimeout(() => {
+                if (screen === 'home') {
+                    homeScreen.classList.remove('hidden');
+                } else if (screen === 'form') {
+                    formScreen.classList.remove('hidden');
+                } else if (screen === 'thankyou') {
+                    thankyouScreen.classList.remove('hidden');
+                }
+            }, 10);
+        }
+
+        // แสดงหน้าต้อนรับ
+        function showHome() {
+            setScreen('home');
+        }
+
+        // แสดงแบบฟอร์ม
+        function showForm() {
+            setScreen('form');
+        }
+
+        // ฟังก์ชันจัดการการส่งฟอร์ม (รองรับ Netlify Forms และ File Upload)
+        async function handleFormSubmit(event) {
+            event.preventDefault(); // หยุดการโหลดหน้าใหม่
+
+            // 1. ตรวจสอบไฟล์แนบ
+            const fileInput = document.getElementById('resumeFile');
+            if (fileInput.files.length === 0) {
+                 showModal('กรุณาแนบไฟล์ Resume/CV');
+                 return false;
+            }
+
+            // 2. แสดงสถานะกำลังโหลด
+            submitText.textContent = 'กำลังส่งข้อมูล...';
+            submitButton.disabled = true;
+            submitButton.classList.add('opacity-70');
+
+            const form = event.target;
+            const formData = new FormData(form);
+
+            // เพิ่มฟิลด์ hidden form-name ไปใน FormData ด้วย
+            formData.append('form-name', 'job_application');
+
+            try {
+                // Netlify จะรับข้อมูลผ่านการส่ง POST ไปยัง URL ของหน้าปัจจุบัน
+                const response = await fetch(form.action, {
+                    method: 'POST',
+                    body: formData, // FormData จะจัดการ content-type boundary เอง
+                });
+
+                if (response.ok) {
+                    // 3. หากส่งสำเร็จ (Netlify รับข้อมูลแล้ว)
+                    form.reset();
+                    // ซ่อน/รีเซ็ตส่วนประสบการณ์ทำงาน
+                    document.getElementById('conditional-experience-block').classList.add('hidden');
+                    document.getElementById('analysis-card').classList.add('hidden');
+                    setScreen('thankyou');
+                } else {
+                    // 4. หากมีปัญหาในการส่ง
+                    console.error('Form submission failed:', response.statusText);
+                    showModal('เกิดข้อผิดพลาดในการส่งข้อมูล: ' + response.statusText + ' โปรดตรวจสอบข้อมูลและลองอีกครั้ง');
+                }
+            } catch (error) {
+                // 5. หากเกิดข้อผิดพลาดเครือข่าย
+                console.error('Network error:', error);
+                showModal('เกิดข้อผิดพลาดทางเครือข่าย กรุณาลองใหม่อีกครั้ง');
+            } finally {
+                // 6. คืนสถานะปุ่ม
+                submitText.textContent = 'ส่งข้อมูลใบสมัคร';
+                submitButton.disabled = false;
+                submitButton.classList.remove('opacity-70');
+            }
+            
+            return false; // ป้องกันการส่งแบบฟอร์มซ้ำ
+        }
+
+        // เริ่มต้นด้วยหน้าต้อนรับ
+        window.onload = () => {
+            setScreen('home');
+            // ซ่อนส่วนประสบการณ์ทำงาน/ฝึกงานเริ่มต้น
+            document.getElementById('conditional-experience-block').classList.add('hidden');
+        };
+    </script>
 </body>
 </html>
